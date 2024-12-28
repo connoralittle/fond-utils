@@ -44,46 +44,48 @@ To perform the determinization, use the command `determinize`:
 $ python -m fondutils determinize --input tests/domain_03.pddl --output determinized-domain.pddl
 ```
 
-By default, deterministic versions of non-deterministic actions will be indexed with term `__DETDUP_<n>` (as done by [PRP](https://github.com/QuMuLab/planner-for-relevant-policies)'s original determinizer), and the name of the determinized domain will be the original name with suffix `_ALLOUT`.
+The name of the determinized domain will be the original name with suffix `_ALLOUT`.
+
+By default, deterministic versions of non-deterministic actions will be indexed with term `__DETDUP_<n>` (as done by [PRP](https://github.com/QuMuLab/planner-for-relevant-policies)'s original determinizer).
 
 > [!TIP]
-> To change the prefix `__DETDUP_` or suffix `_DETDUP__`, use the options `--prefix` and `--suffix`, respectively. To get the resulting PDDL printed on console use `--console`:
+> To change the default prefix `_DETDUP_` use the options `--prefix`, and to add a suffix after the number, use `--suffix`. To get the resulting PDDL printed on console use `--console`:
 
 ```lisp
-$ python -m fondutils determinize --input tests/domain_03.pddl --console --suffix "VER" --output output.pddl
+$ python -m fondutils determinize --input tests/domain_03.pddl --suffix "_SUF_" --prefix "_PRE_" --console
 (define (domain blocks-domain_ALLOUT)
     (:requirements :equality :typing)
     (:types block)
     (:predicates (clear ?b - block)  (emptyhand) (holding ?b - block)  (on ?b1 - block ?b2 - block)  (on-table ?b - block))
-    (:action pick-tower
-        :parameters (?b1 - block ?b2 - block ?b3 - block)
-        :precondition (and (emptyhand) (on ?b1 ?b2) (on ?b2 ?b3))
-        :effect (and (holding ?b2) (clear ?b3) (not (emptyhand)) (not (on ?b2 ?b3)))
-    )
-     (:action pick-up-from-table
-        :parameters (?b - block)
-        :precondition (and (emptyhand) (clear ?b) (on-table ?b))
-        :effect (and (holding ?b) (not (emptyhand)) (not (on-table ?b)))
-    )
-     (:action pick-up_VER_0
+    (:action pick-up_PRE_1_SUF_
         :parameters (?b1 - block ?b2 - block)
         :precondition (and (not (= ?b1 ?b2)) (emptyhand) (clear ?b1) (on ?b1 ?b2))
         :effect (and (holding ?b1) (clear ?b2) (not (emptyhand)) (not (clear ?b1)) (not (on ?b1 ?b2)))
     )
-     (:action pick-up_VER_1
+     (:action pick-up_PRE_2_SUF_
         :parameters (?b1 - block ?b2 - block)
         :precondition (and (not (= ?b1 ?b2)) (emptyhand) (clear ?b1) (on ?b1 ?b2))
         :effect (and (clear ?b2) (on-table ?b1) (not (on ?b1 ?b2)))
+    )
+     (:action pick-up_PRE_3_SUF_
+        :parameters (?b1 - block ?b2 - block)
+        :precondition (and (not (= ?b1 ?b2)) (emptyhand) (clear ?b1) (on ?b1 ?b2))
+        :effect (and )
     )
      (:action put-down
         :parameters (?b - block)
         :precondition (holding ?b)
         :effect (and (on-table ?b) (emptyhand) (clear ?b) (not (holding ?b)))
     )
+)
 ...
 ```
 
 This resulting PDDL domain is now deterministic and can then be used as input to the original [Fast-Downard](https://github.com/aibasel/downward) SAS translator.
+
+>[!NOTE]
+> The tool
+ python -m fondutils normalize --input tests/domprob_05.pddl --output tea.pddl --outproblem tea2.pddl
 
 ## Format allowed on effects
 
