@@ -1,2 +1,4 @@
 fond-domains/
 __pycache__/
+venv/
+normalized-domain.pddl
