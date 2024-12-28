@@ -1,8 +1,8 @@
 
 from pddl.action import Action
 from pddl.core import Domain
-from pddl.logic.base import OneOf, Not
-from pddl.logic.effects import When, AndEffect
+from pddl.logic.base import OneOf, Not, And
+from pddl.logic.effects import When
 from pddl.logic.predicates import Predicate
 from pddl.requirements import Requirements
 
@@ -41,22 +41,22 @@ def normalize_operator(op):
     if len(effs) == 1:
         eff = effs[0]
     else:
-        # Normalize to wrap every operand of an OneOf in an AndEffect
+        # Normalize to wrap every operand of an OneOf in an And effect
         for i in range(len(effs)):
-            if not isinstance(effs[i], AndEffect):
-                effs[i] = AndEffect(effs[i])
+            if not isinstance(effs[i], And):
+                effs[i] = And(effs[i])
 
-        # As an optimization, compress one level of nested AndEffects on the outcomes
+        # As an optimization, compress one level of nested And effects on the outcomes
         new_outcomes = []
         for outcome in effs:
-            if isinstance(outcome, AndEffect):
+            if isinstance(outcome, And):
                 new_operands = []
                 for operand in outcome.operands:
-                    if isinstance(operand, AndEffect):
+                    if isinstance(operand, And):
                         new_operands.extend(operand.operands)
                     else:
                         new_operands.append(operand)
-                new_outcomes.append(AndEffect(*new_operands))
+                new_outcomes.append(And(*new_operands))
             else:
                 new_outcomes.append(outcome)
 
@@ -73,7 +73,7 @@ def flatten(eff):
 
 def combine(eff_lists):
     combos = list(product(*eff_lists))
-    combined_oneofs = [AndEffect(*[x for x in choice if x != AndEffect([])]) for choice in combos]
+    combined_oneofs = [And(*[x for x in choice if x != And([])]) for choice in combos]
     if DEBUG:
         print ("\nCombining:\n%s" % '\n'.join(map(str, eff_lists)))
         print ("Result: %s\n" % combined_oneofs)
@@ -84,7 +84,7 @@ def _flatten(eff):
     if DEBUG:
         print ("Flattening %s" % str(eff))
 
-    if isinstance(eff, AndEffect):
+    if isinstance(eff, And):
         if 0 == len(eff.operands):
             return [eff]
         else:
