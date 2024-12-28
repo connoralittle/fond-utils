@@ -4,7 +4,11 @@ Utilities for parsing and manipulating the FOND planning language.
 
 In the _all-outcome determinization_, each non-deterministic action is replaced with a set of deterministic actions, each encoding one possible effect outcome of the action. A solution in the deterministic version amounts to a weak plan solution in the original FOND problem.
 
-Note this determinizer produces another PDDL domain and does not deal with the problem itself, unlike the SAS-based determinizers used in other planners like [PRP](https://github.com/QuMuLab/planner-for-relevant-policies), [FONDSAT](https://github.com/tomsons22/FOND-SAT), or [CFOND-ASP](https://github.com/ssardina-research/cfond-asp) that produces a SAS encoding of the determinization of a specific instance planning problem and are based on the SAS translator in [Fast-Downard](https://github.com/aibasel/downward) classical planner. For these determinizers that output SAS encodings, please refer to the individual planners or the [translator-fond](https://github.com/ssardina-research/translator-fond) repo.
+> [!IMPORTANT]
+> The determinizer accepts effects that are an arbitrary nesting of `oneof`, conditional effects, and `and`. See section [Format allowed on effects](#format-allowed-on-effects) at the bottom about format accepted.
+
+> [!NOTE]
+> This determinizer produces another PDDL domain and does not deal with the problem itself, unlike the SAS-based determinizers used in other planners like [PRP](https://github.com/QuMuLab/planner-for-relevant-policies), [FONDSAT](https://github.com/tomsons22/FOND-SAT), or [CFOND-ASP](https://github.com/ssardina-research/cfond-asp) that produces a SAS encoding of the determinization of a specific instance planning problem and are based on the SAS translator in [Fast-Downard](https://github.com/aibasel/downward) classical planner. For these determinizers that output SAS encodings, please refer to the individual planners or the [translator-fond](https://github.com/ssardina-research/translator-fond) repo.
 
 ## Pre-requisites
 
@@ -20,27 +24,30 @@ This repo extends `pddl` to accept single files containing both the domain and t
 
 ## Example runs
 
-The system is provided as a module `fondutils`. To just check that the PDDL input file is parsed well, just issue the command `check` and report to console:
+The system is provided as a module `fondutils`. To just check that the PDDL input file is parsed well, use the command `check` and report to console:
 
 ```shell
 $ python -m fondutils check --input tests/domain_03.pddl
 ```
 
-To perform the determinization:
+To simply perform normalization (i.e., have a single top-level `oneof` clause in the effect):
+
+```shell
+$ python -m fondutils normalize --input tests/domain_05.pddl --output normalized-domain.pddl
+```
+
+Example `test/domain_05.pddl` includes some complex (nested) `oneof` effects. The name of the normalized domain will be the original name with suffix `_NORM`.
+
+To perform the determinization, use the command `determinize`:
 
 ```shell
 $ python -m fondutils determinize --input tests/domain_03.pddl --output determinized-domain.pddl
 ```
 
-To simply perform normalization (i.e., have a single top-level oneof clause in the effect):
+By default, deterministic versions of non-deterministic actions will be indexed with term `__DETDUP_<n>` (as done by [PRP](https://github.com/QuMuLab/planner-for-relevant-policies)'s original determinizer), and the name of the determinized domain will be the original name with suffix `_ALLOUT`.
 
-```shell
-$ python -m fondutils normalize --input tests/domain_03.pddl --output normalized-domain.pddl
-```
-
-Deterministic versions of non-deterministic actions will be indexed with term `__DETDUP_<n>_DETDUP__`, similar to [PRP](https://github.com/QuMuLab/planner-for-relevant-policies)'s original determinizer. The name of the determinized domain will be the original name with suffix `_ALLOUT`. The name of the normalized domain will be the original name with suffix `_NORM`.
-
-To change the prefix `__DETDUP_` or suffix `_DETDUP__`, use the options `--prefix` and `--suffix`. To get the resulting PDDL printed on console use `--console`:
+> [!TIP]
+> To change the prefix `__DETDUP_` or suffix `_DETDUP__`, use the options `--prefix` and `--suffix`, respectively. To get the resulting PDDL printed on console use `--console`:
 
 ```lisp
 $ python -m fondutils determinize --input tests/domain_03.pddl --console --suffix "VER" --output output.pddl
@@ -76,7 +83,7 @@ $ python -m fondutils determinize --input tests/domain_03.pddl --console --suffi
 ...
 ```
 
-Note this resulting PDDL domain is now deterministic and can then be used as input to the original [Fast-Downard](https://github.com/aibasel/downward) SAS translator.
+This resulting PDDL domain is now deterministic and can then be used as input to the original [Fast-Downard](https://github.com/aibasel/downward) SAS translator.
 
 ## Format allowed on effects
 
