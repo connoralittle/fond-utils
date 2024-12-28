@@ -1,4 +1,3 @@
-
 from pddl.action import Action
 from pddl.core import Domain
 from pddl.logic.base import OneOf, Not, And
@@ -72,17 +71,18 @@ def flatten(eff):
     return _flatten(eff)
 
 def combine(eff_lists):
-    combos = list(product(*eff_lists))
-    combined_oneofs = [And(*[x for x in choice if x != And([])]) for choice in combos]
     if DEBUG:
-        print ("\nCombining:\n%s" % '\n'.join(map(str, eff_lists)))
-        print ("Result: %s\n" % combined_oneofs)
+        print("\nCombining:\n%s" % "\n".join(map(str, eff_lists)))
+    combos = list(product(*eff_lists))
+    combined_oneofs = [And(*[x for x in choice if x != And()]) for choice in combos]
+    if DEBUG:
+        print("Result: %s\n" % combined_oneofs)
     return combined_oneofs
 
 def _flatten(eff):
 
     if DEBUG:
-        print ("Flattening %s" % str(eff))
+        print("Flattening %s" % str(eff))
 
     if isinstance(eff, And):
         if 0 == len(eff.operands):
@@ -105,5 +105,5 @@ def _flatten(eff):
 
     else:
         if DEBUG:
-            print ("Base: %s" % str(eff))
+            print("Base: %s" % str(eff))
         raise ValueError("Unexpected effect type: %s" % type(eff))
