@@ -1,4 +1,3 @@
-
 import sys
 from lark import Lark
 
@@ -12,7 +11,7 @@ from lark.visitors import Transformer, merge_transformers
 from pddl.parser import PARSERS_DIRECTORY as IMPORT_PARSERS_DIRECTORY
 
 
-DOMPROB_GRAMMAR = """
+DOMPROB_GRAMMAR = r"""
     start: [domain_start] [problem_start]
 
 
@@ -80,20 +79,14 @@ class DomProbParser:
         return result
 
 
-def domprob_to_string(domprob):
-    """Convert a domain and problem to a string."""
-    domain, problem = domprob
-
-    domain_str = domain_to_string(domain) if domain is not None else None
-    problem_str = problem_to_string(problem) if problem is not None else None
-
-    return domain_str, problem_str
-
-
-
 if __name__ == "__main__":
+    # we can use this for quick testing/debugging
     file = sys.argv[1]
     with open(file, "r") as f:
         ptext = f.read()
-    app = DomProbParser()(ptext)
-    print(app)
+
+    domain, problem = DomProbParser()(ptext)
+    if domain:
+        domprob = print(domain_to_string(domain))
+    if problem:
+        domprob = print(problem_to_string(problem))

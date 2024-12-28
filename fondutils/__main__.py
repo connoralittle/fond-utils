@@ -36,8 +36,9 @@ def main():
         parser.error("--outproblem is required for domain+problem input")
 
     if args.command == "check":
-        print("\n  Checking domain file...\n")
-        print(domain_to_string(fond_domain))
+        print("\n  Checking domain/problem file (if parsed well, domain/problem is printed nicely)...\n")
+        if fond_domain:
+            print(domain_to_string(fond_domain))
         if fond_problem is not None:
             print(problem_to_string(fond_problem))
         return
