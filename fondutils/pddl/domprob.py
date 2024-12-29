@@ -1,6 +1,7 @@
 import sys
 from lark import Lark
 
+from pddl.helpers.base import call_parser
 from pddl.parser.domain import DomainTransformer
 from pddl.parser.problem import ProblemTransformer
 from pddl.formatter import domain_to_string, problem_to_string
@@ -66,18 +67,7 @@ class DomProbParser:
 
         The call_parser() function is part of pddl package: will build a Tree from text and then an object pddl_parser.app_problem.APPProblem from the Tree
         """
-        # TODO: this is OK when pddl.helpers.base provides call_parser API, but that is not in pip package 0.4.0 so we implement directly what is in that function
-        # https://github.com/AI-Planning/pddl/blob/4ee8d63034a668072dd0656be1fe59d2f00804f8/pddl/helpers/base.py#L203
-        # return call_parser(text, self._parser, self._transformer)
-
-        # this was actually the code in call_parser() function
-        sys.tracebacklimit = 0  # noqa
-        tree = self._parser.parse(text)
-
-        sys.tracebacklimit = None  # noqa
-        result = self._transformer.transform(tree)
-        return result
-
+        return call_parser(text, self._parser, self._transformer)
 
 if __name__ == "__main__":
     # we can use this for quick testing/debugging
