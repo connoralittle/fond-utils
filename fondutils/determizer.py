@@ -6,7 +6,7 @@ from pddl.logic.base import OneOf, And
 from pddl.requirements import Requirements
 
 
-from fondutils.normalizer import normalize_operator
+from .normalizer import normalize_operator
 
 DEBUG = False
 
