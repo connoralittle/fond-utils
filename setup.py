@@ -2,6 +2,9 @@ import setuptools
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
+    long_description = long_description.replace("> [!IMPORTANT]", "### IMPORTANT")
+    long_description = long_description.replace("> [!TIP]", "### TIP")
+    long_description = long_description.replace("> [!NOTE]", "### NOTE")
 
 setuptools.setup(name='fond-utils',
       version='0.0.1',
