@@ -11,7 +11,7 @@ setuptools.setup(name='fond-utils',
       url='https://github.com/AI-Planning/fond-utils',
       author='Sebastian Sardina, Christian Muise',
       license='MIT',
-      packages=['fondutils'],
+      packages=['fondutils', 'fondutils.pddl'],
       scripts=['bin/fond-utils'],
       classifiers=[
           "Programming Language :: Python :: 3",
