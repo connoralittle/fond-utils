@@ -2,9 +2,9 @@ import argparse
 
 from pddl.formatter import domain_to_string, problem_to_string
 
-from fondutils.normalizer import normalize
-from fondutils.determizer import determinize
-from fondutils.pddl import parse_domain_problem
+from .normalizer import normalize
+from .determizer import determinize
+from .pddl import parse_domain_problem
 
 
 def main():

@@ -2,3 +2,5 @@ fond-domains/
 __pycache__/
 venv/
 normalized-domain.pddl
+fond_utils.egg-info/
+build/
