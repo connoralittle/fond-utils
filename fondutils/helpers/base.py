@@ -10,6 +10,7 @@
 import re
 import sys
 from pathlib import Path
+from urllib.parse import urlparse
 
 
 def _get_current_path() -> Path:
@@ -18,3 +19,11 @@ def _get_current_path() -> Path:
     import os
 
     return Path(os.path.dirname(inspect.getfile(inspect.currentframe()))).parent  # type: ignore
+
+
+def is_url(url):
+    try:
+        result = urlparse(url)
+        return all([result.scheme, result.netloc])
+    except ValueError:
+        return False

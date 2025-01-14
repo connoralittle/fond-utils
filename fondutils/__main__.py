@@ -1,4 +1,5 @@
 import argparse
+import os
 
 from pddl.formatter import domain_to_string, problem_to_string
 
@@ -6,12 +7,16 @@ from .normalizer import normalize
 from .determizer import determinize
 from .pddl import parse_domain_problem
 
+from .helpers.base import is_url
+
+import io
+import requests
 
 def main():
     parser = argparse.ArgumentParser(description="Utilities to process FOND PDDL")
 
     parser.add_argument("command", choices=["check", "determinize", "normalize"])
-    parser.add_argument("--input", required=True, help="Input domain file")
+    parser.add_argument("--input", required=True, help="Input domain file/url")
     parser.add_argument("--output", help="Output domain file")
     parser.add_argument("--outproblem", help="Optional output problem file")
     parser.add_argument(
@@ -28,8 +33,27 @@ def main():
     )
     args = parser.parse_args()
 
+    # handle input which could be a file or a url
+    input_file = args.input
+    if is_url(args.input):
+        try:
+            r = requests.get(args.input)
+            if r.status_code != 200:
+                print("Error: input url wrong or not found; status code received:", r.status_code)
+                exit(1)
+            input_file = io.StringIO(r.content.decode("utf-8"))
+        except requests.ConnectionError as e:
+            print("Error: input url wrong or not found:", e)
+            exit(1)
+    elif not os.path.isfile(args.input):
+        print("Error: input url/file wrong or not found:", args.input)
+        exit(1)
+
+    # if fond_domain is None:
+    #     parser.error("a domain is needed for this tool")
+
     # the input may be a domain alone or a domain+problem
-    fond_domain, fond_problem = parse_domain_problem(args.input)
+    fond_domain, fond_problem = parse_domain_problem(input_file)
 
     if fond_domain is None:
         parser.error("a domain is needed for this tool")
@@ -40,13 +64,6 @@ def main():
         and (not args.console)
     ):
         parser.error(f"--output is required for {args.command} command")
-
-    # if (
-    #     (fond_problem is not None)
-    #     and (not args.outproblem)
-    #     and (not args.command == "check")
-    # ):
-    #     parser.error("--outproblem is required for domain+problem input")
 
     if args.command == "check":
         print("\n  Checking domain/problem file (if parsed well, domain/problem is printed nicely)...\n")
