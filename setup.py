@@ -6,22 +6,27 @@ with open("README.md", "r") as fh:
     long_description = long_description.replace("> [!TIP]", "### TIP")
     long_description = long_description.replace("> [!NOTE]", "### NOTE")
 
-setuptools.setup(name='fond-utils',
-      version='0.0.1',
-      description='Utilities for parsing and manipulating the FOND planning language.',
-      long_description=long_description,
-      long_description_content_type="text/markdown",
-      url='https://github.com/AI-Planning/fond-utils',
-      author='Sebastian Sardina, Christian Muise',
-      license='MIT',
-      packages=['fondutils', 'fondutils.pddl'],
-      scripts=['bin/fond-utils'],
-      classifiers=[
-          "Programming Language :: Python :: 3",
-          "License :: OSI Approved :: MIT License",
-          "Operating System :: POSIX :: Linux",
-      ],
-      python_requires='>=3.8',
-      include_package_data=True,
-      install_requires=['pddl'],
-      zip_safe=False)
+setuptools.setup(
+    name="fond-utils",
+    version="0.0.1",
+    description="Utilities for parsing and manipulating the FOND planning language.",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
+    url="https://github.com/AI-Planning/fond-utils",
+    author="Sebastian Sardina, Christian Muise",
+    license="MIT",
+    packages=["fondutils", "fondutils.pddl", "fondutils.helpers"],
+    # scripts=["bin/fond-utils"],
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: POSIX :: Linux",
+    ],
+    python_requires=">=3.8",
+    include_package_data=True,
+    install_requires=["pddl"],
+    entry_points={
+        "console_scripts": ["fond-utils=fondutils.__main__:main"],
+    },
+    zip_safe=False,
+)

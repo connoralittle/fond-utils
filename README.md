@@ -1,26 +1,63 @@
 # FOND Utilities
 
-Utilities for parsing and manipulating the FOND planning language.
+Utilities for parsing and manipulating the FOND planning language (those containing non-deterministic `oneof` effects). At this point the system can:
 
-In the _all-outcome determinization_, each non-deterministic action is replaced with a set of deterministic actions, each encoding one possible effect outcome of the action. A solution in the deterministic version amounts to a weak plan solution in the original FOND problem.
+- _Check_ a file contains a legal FOND domain/problem.
+- _Normalize_ a FOND planning domain (i.e., have a single top-level oneof clause in the effect).
+- _Compute the all-outcome determinization_ of a FOND domain, where each non-deterministic action is replaced with a set of deterministic actions, each encoding one possible effect outcome of the action. A solution in the deterministic version amounts to a weak plan solution in the original FOND problem.
+  - Note the determinizer produces another PDDL domain and does not deal with the problem itself, unlike the SAS-based determinizers used in other planners (like [PRP](https://github.com/QuMuLab/planner-for-relevant-policies), [FONDSAT](https://github.com/tomsons22/FOND-SAT), or [CFOND-ASP](https://github.com/ssardina-research/cfond-asp)) that are are based on the SAS translator in [Fast-Downard](https://github.com/aibasel/downward) classical planner and produce a SAS encoding of the determinization of a specific instance planning problem. For these determinizers that output SAS encodings, please refer to the individual planners or the [translator-fond](https://github.com/ssardina-research/translator-fond) repo.
 
 > [!IMPORTANT]
-> The determinizer accepts effects that are an arbitrary nesting of `oneof`, conditional effects, and `and`. See section [Format allowed on effects](#format-allowed-on-effects) at the bottom about format accepted.
+> The system accepts effects that are an arbitrary nesting of `oneof`, conditional effects, and `and`. See section [Format allowed on effects](#format-allowed-on-effects) at the bottom about format accepted.
 
-> [!NOTE]
-> This determinizer produces another PDDL domain and does not deal with the problem itself, unlike the SAS-based determinizers used in other planners like [PRP](https://github.com/QuMuLab/planner-for-relevant-policies), [FONDSAT](https://github.com/tomsons22/FOND-SAT), or [CFOND-ASP](https://github.com/ssardina-research/cfond-asp) that produces a SAS encoding of the determinization of a specific instance planning problem and are based on the SAS translator in [Fast-Downard](https://github.com/aibasel/downward) classical planner. For these determinizers that output SAS encodings, please refer to the individual planners or the [translator-fond](https://github.com/ssardina-research/translator-fond) repo.
+## Install
 
-## Pre-requisites
-
-The script relies on the [pddl](https://github.com/AI-Planning/pddl) parser, which can be easily installed via:
+The fond-utils system can be installed (as a package) directly from its [PyPi](https://pypi.org/project/fond-utils/) repository:
 
 ```shell
-$ pip install pddl
+$ pip install fond-utils
 ```
 
-The pddl system relies itself on the [lark](https://lark-parser.readthedocs.io/en/stable/) parsing library.
+Alternatively, it can be installed directly from the repo:
 
-This repo extends `pddl` to accept single files containing both the domain and the problem instance, and will be extended further to accept labelled outcomes in the effects.
+```shell
+$ pip install git+https://github.com/AI-Planning/fond-utils
+```
+
+or, clone the repository and install:
+
+```shell
+$ git clone https://github.com/AI-Planning/fond-utils
+$ cd fond-utils
+$ pip install .
+```
+
+The system already includes a CLI console application `fond-utils` that will generally be the tool to use. To check the installation was successful just run:
+
+```shell
+$ fond-utils -h
+usage: fond-utils [-h] --input INPUT [--output OUTPUT] [--outproblem OUTPROBLEM] [--prefix PREFIX] [--suffix SUFFIX]
+                  [--console]
+                  {check,determinize,normalize}
+
+Utilities to process FOND PDDL
+
+positional arguments:
+  {check,determinize,normalize}
+
+options:
+  -h, --help            show this help message and exit
+  --input INPUT         Input domain file
+  --output OUTPUT       Output domain file
+  --outproblem OUTPROBLEM
+                        Optional output problem file
+  --prefix PREFIX       Prefix for determinized action outcome identifier (Default: _DETDUP_)
+  --suffix SUFFIX       Suffix for determinized action outcome identifier
+  --console             Print the domain after processing
+```
+
+> [!NOTE]
+> The scripts on this system relies on the [pddl](https://github.com/AI-Planning/pddl) parser, which can be easily installed via [PyPi](https://pypi.org/project/pddl/) repository (`pip install pddl`). The pddl system relies itself on the [lark](https://lark-parser.readthedocs.io/en/stable/) parsing library. The fond-utils system, however, extends `pddl` to accept single files containing _both_ the domain and the problem instance, and will be extended further to accept labelled outcomes in the effects.
 
 ## Example runs
 
