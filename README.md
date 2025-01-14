@@ -59,26 +59,44 @@ options:
 > [!NOTE]
 > The scripts on this system relies on the [pddl](https://github.com/AI-Planning/pddl) parser, which can be easily installed via [PyPi](https://pypi.org/project/pddl/) repository (`pip install pddl`). The pddl system relies itself on the [lark](https://lark-parser.readthedocs.io/en/stable/) parsing library. The fond-utils system, however, extends `pddl` to accept single files containing _both_ the domain and the problem instance, and will be extended further to accept labelled outcomes in the effects.
 
-## Example runs
+## CLI example runs
 
-The system is provided as a module `fondutils`. To just check that the PDDL input file is parsed well, use the command `check` and report to console:
+To just check that the PDDL input file is parsed well, use the command `check` and report to console:
 
 ```shell
+$ fond-utils check --input https://raw.githubusercontent.com/AI-Planning/fond-utils/refs/heads/main/tests/domain_03.pddl
+```
+
+Since the system is provided as a module `fondutils`, this would be equivalent to:
+
+```shell
+$ python -m fondutils check --input https://raw.githubusercontent.com/AI-Planning/fond-utils/refs/heads/main/tests/domain_03.pddl
+```
+
+Note this would work if you have cloned the repo rather than installed the actual package; for example:
+
+```shell
+$ git clone https://github.com/AI-Planning/fond-utils
+$ cd fond-utils
 $ python -m fondutils check --input tests/domain_03.pddl
 ```
+
+### Normalize a domain
 
 To simply perform normalization (i.e., have a single top-level `oneof` clause in the effect):
 
 ```shell
-$ python -m fondutils normalize --input tests/domain_05.pddl --output normalized-domain.pddl
+$ fond-utils normalize --input tests/domain_05.pddl --output normalized-domain.pddl
 ```
 
 Example `test/domain_05.pddl` includes some complex (nested) `oneof` effects. The name of the normalized domain will be the original name with suffix `_NORM`.
 
+### All-outcome determinization
+
 To perform the determinization, use the command `determinize`:
 
 ```shell
-$ python -m fondutils determinize --input tests/domain_03.pddl --output determinized-domain.pddl
+$ fond-utils determinize --input tests/domain_03.pddl --output determinized-domain.pddl
 ```
 
 The name of the determinized domain will be the original name with suffix `_ALLOUT`.
