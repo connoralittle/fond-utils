@@ -1,5 +1,12 @@
 import setuptools
 
+import os
+
+here = os.path.abspath(os.path.dirname(__file__))
+about = {}
+with open(os.path.join(here, "fondutils", "__version__.py"), "r") as f:
+    exec(f.read(), about)
+
 with open("README.md", "r") as fh:
     long_description = fh.read()
     long_description = long_description.replace("> [!IMPORTANT]", "### IMPORTANT")
@@ -7,16 +14,16 @@ with open("README.md", "r") as fh:
     long_description = long_description.replace("> [!NOTE]", "### NOTE")
 
 setuptools.setup(
-    name="fond-utils",
-    version="0.0.1",
-    description="Utilities for parsing and manipulating the FOND planning language.",
+    name=about["__title__"],
+    description=about["__description__"],
+    version=about["__version__"],
+    author=about["__author__"],
+    url=about["__url__"],
+    author_email=about["__author_email__"],
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/AI-Planning/fond-utils",
-    author="Sebastian Sardina, Christian Muise",
-    license="MIT",
+    license=about["__license__"],
     packages=["fondutils", "fondutils.pddl", "fondutils.helpers"],
-    # scripts=["bin/fond-utils"],
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
