@@ -111,7 +111,7 @@ The deterministic versions of a non-deterministic action are enumerated (startin
 > To change the default operator name prefix `DETDUP` use the options `--prefix`, and to add a suffix after the number, use `--suffix`. To set the suffix for the domain name use `--suffix-domain`. To get the resulting PDDL printed on console use `--console`:
 
 ```lisp
-$ fond-utils  determinize --input tests/domain_03.pddl --prefix "PRE" --suffix "SUF"  --prefix-domain "NEW" --console
+$ fond-utils  determinize --input tests/domain_03.pddl --prefix "PRE" --suffix "SUF"  --suffix-domain "NEW" --console
 (define (domain blocks-domain_NEW)
     (:requirements :equality :typing)
     (:types block)
