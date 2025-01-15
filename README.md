@@ -142,7 +142,7 @@ $ fond-utils  determinize --input tests/domain_03.pddl --prefix "PRE" --suffix "
 This resulting PDDL domain is now deterministic and can then be used as input to the original [Fast-Downward](https://github.com/aibasel/downward) SAS translator.
 
 > [!WARNING]
-> If the new domain is named with a suffix (as in the default case), existing problem instances may not be compatible with the new domain, as they will still refer to the original domain in the `:domain` section. If these problem instances will be used with the new PDDL encoding, either use no suffix for the domain name (so it will keep the same name as the original) or change the `:domain` section in the problem instances to match the new name that includes the suffix.
+> If the new domain is named with a suffix (as in the default case), existing problem instances may not be compatible with the new domain, as they will still refer to the original domain in the `:domain` section. If these problem instances will be used with the new PDDL encoding, either use no suffix for the domain name (so it will keep the same name as the original) or change the `:domain` section in the problem instances to match the new name that includes the suffix (by setting private property `_domain_name`). Note that if the file parsed included the problem as well, the CLI tool will do such update so that the resulting problem will have its domain name matching the new domain.
 
 ### As a library
 
@@ -175,7 +175,7 @@ domain_det = determinize(domain)
 print(domain_to_string(domain_det))
 ```
 
-To parse parse files that contain _both_ domain and problem together, we can use function `parse_domain_problem` in `fondutils.pddl`:
+To parse parse files that contain _both_ domain and problem together, we can use function `parse_domain_problem` in `fondutils.pddl`. Note how the following code also sets explicit domain suffix and operators prefixes and suffixes, and how we update the domain name in the problem to match the new one:
 
 ```python
 import io
@@ -184,27 +184,26 @@ from pathlib import Path
 import requests
 
 from pddl import parse_domain
-from pddl.formatter import domain_to_string
+from pddl.formatter import domain_to_string, problem_to_string
 from fondutils.pddl import parse_domain_problem
 from fondutils.determizer import determinize
 from fondutils.normalizer import normalize
 
 # get a domain from AI-Planning/fond-domains repo
-URL_DOMAIN = "https://raw.githubusercontent.com/AI-Planning/fond-domains/refs/heads/main/benchmarks/blocksworld-2/domain.pddl"
+URL_DOMAIN = "https://raw.githubusercontent.com/AI-Planning/fond-utils/refs/heads/main/tests/domprob_03.pddl"
 r = requests.get(URL_DOMAIN)
 domain_file = io.StringIO(r.content.decode("utf-8"))
 
-domain, _ = parse_domain_problem(domain_file)
-
-# compute the normalization of the domain and print it on console
-domain_norm = normalize(domain)
-print(domain_to_string(domain_norm))
+domain, problem = parse_domain_problem(domain_file)
 
 # compute the determinization of the domain and print it on console
-domain_det = determinize(domain)
+domain_det = determinize(domain, dom_suffix="XYZ", op_prefix="PRE", op_suffix="SUF")
 print(domain_to_string(domain_det))
-```
 
+# update domain name in problem to match new domain name and print updated problem
+problem._domain_name = domain_det.name
+print(problem_to_string(problem))
+```
 
 ## Format allowed on effects
 
