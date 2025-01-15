@@ -11,11 +11,43 @@ from .normalizer import normalize_operator
 DEBUG = False
 
 
-def determinize(domain: Domain, prefix: str = "_DETDUP_", suffix: str = "") -> Domain:
+def determinize(domain: Domain, dom_suffix: str = "ALLOUT", op_prefix: str = "DETDUP", op_suffix: str = "") -> Domain:
+    """Compute the all-outcome deterministic version of a FOND domain.
+
+    Each non-deterministic operator is replaced by a set of deterministic operators, one for each possible outcome.
+
+    The name of the new operators is the name of the original operator with a prefix, a counter, and a suffix; for example, the operator "move" with two possible outcomes will be replaced by two operators named "move<PREFIX>01<SUFFIX>" and "move<PREFIX>02<SUFFIX>".
+
+    The name of the new domain is the name of the original domain with a suffix, for example, the domain "blocks" will be replaced by the domain "blocks_ALLOUT".
+
+    Args:
+        domain (Domain): the FOND domain to be determinized
+        dom_suffix (str, optional): the suffix on the resulting domain name. Defaults to "_ALLOUT".
+        op_prefix (str, optional): _description_. Defaults to "_DETDUP_".
+        op_suffix (str, optional): _description_. Defaults to "".
+
+    Returns:
+        Domain: _description_
+    """
     new_actions = []
 
-    for act in domain.actions:
+    # make sure prefixes and suffixes are well formed and are able to separate the original operator name from the counter
+    if op_prefix == "":
+        op_prefix = "_"
+    if op_prefix[-1] != "_":
+        op_prefix += "_"
+    if op_prefix[0] != "_":
+        op_prefix = "_" + op_prefix
+    if op_suffix != "" and op_suffix[0] != "_":
+        op_suffix = "_" + op_suffix
 
+    # make sure the domain name is well-formed and suffix separated form original name
+    if dom_suffix != "" and dom_suffix[0] != "_":
+        dom_suffix = "_" + dom_suffix
+        
+    print(op_prefix, op_suffix, dom_suffix)
+
+    for act in domain.actions:
         if DEBUG:
             print(f"\nNormalizing action: {act.name}")
 
@@ -28,7 +60,7 @@ def determinize(domain: Domain, prefix: str = "_DETDUP_", suffix: str = "") -> D
                 ), f"Effect in OneOf is not an And effect: {eff}"
                 new_actions.append(
                     Action(
-                        name=f"{act.name}{prefix}{counter}{suffix}",
+                        name=f"{act.name}{op_prefix}{counter}{op_suffix}",
                         parameters=act.parameters,
                         precondition=act.precondition,
                         effect=eff,
@@ -39,7 +71,7 @@ def determinize(domain: Domain, prefix: str = "_DETDUP_", suffix: str = "") -> D
             new_actions.append(new_act)
 
     return Domain(
-        name=domain.name + "_ALLOUT",
+        name=domain.name + dom_suffix,
         requirements=frozenset(
             [r for r in domain.requirements if r is not Requirements.NON_DETERMINISTIC]
         ),
@@ -50,7 +82,6 @@ def determinize(domain: Domain, prefix: str = "_DETDUP_", suffix: str = "") -> D
         functions=domain.functions,
         derived_predicates=domain.derived_predicates,
     )
-
 
 
 if __name__ == "__main__":

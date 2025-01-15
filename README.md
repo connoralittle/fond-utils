@@ -103,15 +103,15 @@ To perform the determinization, use the command `determinize`:
 $ fond-utils determinize --input tests/domain_03.pddl --output determinized-domain.pddl
 ```
 
-The name of the determinized domain will be the original name with suffix `_ALLOUT`.
+The name of the determinized domain will be the original name with a possible suffix separated with an underscore (default `_ALLOUT`).
 
-By default, deterministic versions of non-deterministic actions will be indexed with term `__DETDUP_<n>` (as done by [PRP](https://github.com/QuMuLab/planner-for-relevant-policies)'s original determinizer).
+The deterministic versions of a non-deterministic action are enumerated (starting from 1) with possible prefix and suffix on the number, each part separated with an underscore `_`. For example, the third deterministic action of operator `move` would be named `move_<PREFIX>_3_<SUFFIX>`; if no prefix or suffix is set, it would be just `move_3`.
 
 > [!TIP]
-> To change the default prefix `_DETDUP_` use the options `--prefix`, and to add a suffix after the number, use `--suffix`. To get the resulting PDDL printed on console use `--console`:
+> To change the default prefix `DETDUP` use the options `--prefix`, and to add a suffix after the number, use `--suffix`. To get the resulting PDDL printed on console use `--console`:
 
 ```lisp
-$ python -m fondutils determinize --input tests/domain_03.pddl --suffix "_SUF_" --prefix "_PRE_" --console
+$ python -m fondutils determinize --input tests/domain_03.pddl --prefix "PRE" --suffix "SUF" --console
 (define (domain blocks-domain_ALLOUT)
     (:requirements :equality :typing)
     (:types block)

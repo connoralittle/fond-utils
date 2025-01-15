@@ -74,7 +74,7 @@ def main():
         return
 
     elif args.command == "determinize":
-        new_domain = determinize(fond_domain, args.prefix, args.suffix)
+        new_domain = determinize(fond_domain, op_prefix=args.prefix, op_suffix=args.suffix)
 
     elif args.command == "normalize":
         new_domain = normalize(fond_domain)
