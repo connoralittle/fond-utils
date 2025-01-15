@@ -59,7 +59,11 @@ options:
 > [!NOTE]
 > The scripts on this system relies on the [pddl](https://github.com/AI-Planning/pddl) parser, which can be easily installed via [PyPi](https://pypi.org/project/pddl/) repository (`pip install pddl`). The pddl system relies itself on the [lark](https://lark-parser.readthedocs.io/en/stable/) parsing library. The fond-utils system, however, extends `pddl` to accept single files containing _both_ the domain and the problem instance, and will be extended further to accept labelled outcomes in the effects.
 
-## CLI example runs
+## Quickstart
+
+You can use the fond-utils package in two ways: as a library, and as a CLI tool.
+
+### As a CLI application tool
 
 To just check that the PDDL input file is parsed well, use the command `check` and report to console:
 
@@ -136,11 +140,40 @@ $ python -m fondutils determinize --input tests/domain_03.pddl --suffix "_SUF_" 
 ...
 ```
 
-This resulting PDDL domain is now deterministic and can then be used as input to the original [Fast-Downard](https://github.com/aibasel/downward) SAS translator.
+This resulting PDDL domain is now deterministic and can then be used as input to the original [Fast-Downward](https://github.com/aibasel/downward) SAS translator.
 
->[!NOTE]
-> The tool
- python -m fondutils normalize --input tests/domprob_05.pddl --output tea.pddl --outproblem tea2.pddl
+### As a library
+
+This is an example of how we can normalize and determinize a PDDL non-deterministic domain programmatically:
+
+```python
+import io
+import inspect
+from pathlib import Path
+import requests
+
+from pddl.formatter import domain_to_string
+from fondutils.pddl import parse_domain_problem
+from fondutils.determizer import determinize
+from fondutils.normalizer import normalize
+
+# get a domain from AI-Planning/fond-domains repo
+URL_DOMAIN = "https://raw.githubusercontent.com/AI-Planning/fond-domains/refs/heads/main/benchmarks/blocksworld-2/domain.pddl"
+r = requests.get(URL_DOMAIN)
+domain_file = io.StringIO(r.content.decode("utf-8"))
+
+domain, _ = parse_domain_problem(domain_file)
+
+# compute the normalization of the domain and print it on console
+domain_norm = normalize(domain)
+print(domain_to_string(domain_norm))
+
+# compute the determinization of the domain and print it on console
+domain_det = determinize(domain)
+print(domain_to_string(domain_det))
+```
+
+Note the above code uses `fondutils.pddl.parse_domain_problem` for parsing, which can handle files containing both the domain and problem (though in the above example we the file only contains a domain).
 
 ## Format allowed on effects
 
