@@ -2,6 +2,8 @@ import io
 from fondutils.pddl import parse_domain_problem
 from pddl.formatter import domain_to_string, problem_to_string
 
+from pddl import parse_domain
+
 from fondutils.determizer import determinize
 
 import inspect
@@ -12,75 +14,75 @@ _current_filepath = inspect.getframeinfo(inspect.currentframe()).filename  # typ
 TEST_DIRECTORY = Path(_current_filepath).absolute().parent
 
 def test_01():
-    domain, _ = parse_domain_problem(TEST_DIRECTORY / "domain_01.pddl")
-    domain_norm = determinize(domain)
+    domain = parse_domain(TEST_DIRECTORY / "domain_01.pddl")
+    domain_det = determinize(domain)
 
     with open(TEST_DIRECTORY / "domain_01_det.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_det) == domain_expected
 
 
 def test_02():
-    domain, _ = parse_domain_problem(TEST_DIRECTORY / "domain_02.pddl")
-    domain_norm = determinize(domain)
+    domain = parse_domain(TEST_DIRECTORY / "domain_02.pddl")
+    domain_det = determinize(domain)
 
     with open(TEST_DIRECTORY / "domain_02_det.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_det) == domain_expected
 
 
 def test_03():
-    domain, _ = parse_domain_problem(TEST_DIRECTORY / "domain_03.pddl")
-    domain_norm = determinize(domain)
+    domain = parse_domain(TEST_DIRECTORY / "domain_03.pddl")
+    domain_det = determinize(domain)
 
     with open(TEST_DIRECTORY / "domain_03_det.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_det) == domain_expected
 
 
 def test_04():
-    domain, _ = parse_domain_problem(TEST_DIRECTORY / "domain_04.pddl")
-    domain_norm = determinize(domain)
+    domain = parse_domain(TEST_DIRECTORY / "domain_04.pddl")
+    domain_det = determinize(domain)
 
     with open(TEST_DIRECTORY / "domain_04_det.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_det) == domain_expected
 
 
 def test_05():
-    domain, _ = parse_domain_problem(TEST_DIRECTORY / "domain_05.pddl")
-    domain_norm = determinize(domain)
+    domain = parse_domain(TEST_DIRECTORY / "domain_05.pddl")
+    domain_det = determinize(domain)
 
     with open(TEST_DIRECTORY / "domain_05_det.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_det) == domain_expected
 
 
 def test_06():
     """like 03 but with a problem also in the file"""
     domain, _ = parse_domain_problem(TEST_DIRECTORY / "domprob_03.pddl")
-    domain_norm = determinize(domain)
+    domain_det = determinize(domain)
 
     with open(TEST_DIRECTORY / "domain_03_det.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_det) == domain_expected
 
 
 def test_07():
     """like 05 but with a problem also in the file"""
     domain, _ = parse_domain_problem(TEST_DIRECTORY / "domprob_05.pddl")
-    domain_norm = determinize(domain)
+    domain_det = determinize(domain)
 
     with open(TEST_DIRECTORY / "domain_05_det.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_det) == domain_expected
 
 
 def test_08():
@@ -92,12 +94,23 @@ def test_08():
     domain_file = io.StringIO(r.content.decode("utf-8"))
 
     domain, _ = parse_domain_problem(domain_file)
-    domain_norm = determinize(domain)
+    domain_det = determinize(domain)
 
     with open(TEST_DIRECTORY / "domain_03_det.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_det) == domain_expected
+
+
+def test_09():
+    """like 03 but with a problem also in the file and no suffix in domain name"""
+    domain, _ = parse_domain_problem(TEST_DIRECTORY / "domprob_03.pddl")
+    domain_det = determinize(domain, dom_suffix="")
+
+    with open(TEST_DIRECTORY / "domain_03_det_02.pddl", "r") as file:
+        domain_expected = file.read()
+
+    assert domain_to_string(domain_det) == domain_expected
 
 
 if __name__ == "__main__":

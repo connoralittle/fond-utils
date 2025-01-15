@@ -13,74 +13,74 @@ TEST_DIRECTORY = Path(_current_filepath).absolute().parent
 
 def test_01():
     domain, _ = parse_domain_problem(TEST_DIRECTORY / "domain_01.pddl")
-    domain_norm = normalize(domain)
+    domain_norm = normalize(domain, dom_suffix="NORM")
 
     with open(TEST_DIRECTORY / "domain_01_norm.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_norm) == domain_expected
 
 
 def test_02():
     domain, _ = parse_domain_problem(TEST_DIRECTORY / "domain_02.pddl")
-    domain_norm = normalize(domain)
+    domain_norm = normalize(domain, dom_suffix="NORM")
 
     with open(TEST_DIRECTORY / "domain_02_norm.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_norm) == domain_expected
 
 
 def test_03():
     domain, _ = parse_domain_problem(TEST_DIRECTORY / "domain_03.pddl")
-    domain_norm = normalize(domain)
+    domain_norm = normalize(domain, dom_suffix="NORM")
 
     with open(TEST_DIRECTORY / "domain_03_norm.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_norm) == domain_expected
 
 
 def test_04():
     domain, _ = parse_domain_problem(TEST_DIRECTORY / "domain_04.pddl")
-    domain_norm = normalize(domain)
+    domain_norm = normalize(domain, dom_suffix="NORM")
 
     with open(TEST_DIRECTORY / "domain_04_norm.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_norm) == domain_expected
 
 
 def test_05():
     domain, _ = parse_domain_problem(TEST_DIRECTORY / "domain_05.pddl")
-    domain_norm = normalize(domain)
+    domain_norm = normalize(domain, dom_suffix="NORM")
 
     with open(TEST_DIRECTORY / "domain_05_norm.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_norm) == domain_expected
 
 
 def test_06():
     """like 03 but with a problem also in the file"""
     domain, _ = parse_domain_problem(TEST_DIRECTORY / "domprob_03.pddl")
-    domain_norm = normalize(domain)
+    domain_norm = normalize(domain, dom_suffix="NORM")
 
     with open(TEST_DIRECTORY / "domain_03_norm.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_norm) == domain_expected
 
 
 def test_07():
     """like 05 but with a problem also in the file"""
     domain, _ = parse_domain_problem(TEST_DIRECTORY / "domprob_05.pddl")
-    domain_norm = normalize(domain)
+    domain_norm = normalize(domain, dom_suffix="NORM")
 
     with open(TEST_DIRECTORY / "domain_05_norm.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_norm) == domain_expected
 
 
 def test_08():
@@ -92,12 +92,12 @@ def test_08():
     domain_file = io.StringIO(r.content.decode("utf-8"))
 
     domain, _ = parse_domain_problem(domain_file)
-    domain_norm = normalize(domain)
+    domain_norm = normalize(domain, dom_suffix="NORM")
 
     with open(TEST_DIRECTORY / "domain_03_norm.pddl", "r") as file:
-        domain_norm_expected = file.read()
+        domain_expected = file.read()
 
-    assert domain_to_string(domain_norm) == domain_norm_expected
+    assert domain_to_string(domain_norm) == domain_expected
 
 
 if __name__ == "_main_":
