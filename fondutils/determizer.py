@@ -11,7 +11,7 @@ from .normalizer import normalize_operator
 DEBUG = False
 
 
-def determinize(domain: Domain, prefix: str, suffix: str) -> Domain:
+def determinize(domain: Domain, prefix: str = "_DETDUP_", suffix: str = "") -> Domain:
     new_actions = []
 
     for act in domain.actions:
