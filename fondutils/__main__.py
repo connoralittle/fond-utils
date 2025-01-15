@@ -98,6 +98,13 @@ def main():
                 f.write("\n\n")
                 f.write(problem_to_string(fond_problem))
 
+    # update domain name in problem to match new domain name
+    # NOTE: we need to access the private data of the object bc there is no setter :-(
+    if fond_problem is not None:
+        fond_problem._domain_name = (
+            new_domain.name
+        )
+
     # write the problem (if any) in a separate problem file
     if args.outproblem and fond_problem is not None:
         with open(args.outproblem, "w") as f:
