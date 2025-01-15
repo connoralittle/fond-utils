@@ -12,6 +12,7 @@ with open("README.md", "r") as fh:
     long_description = long_description.replace("> [!IMPORTANT]", "### IMPORTANT")
     long_description = long_description.replace("> [!TIP]", "### TIP")
     long_description = long_description.replace("> [!NOTE]", "### NOTE")
+    long_description = long_description.replace("> [!WARNING]", "### WARNING")
 
 setuptools.setup(
     name=about["__title__"],

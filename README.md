@@ -103,12 +103,12 @@ To perform the determinization, use the command `determinize`:
 $ fond-utils determinize --input tests/domain_03.pddl --output determinized-domain.pddl
 ```
 
-The name of the determinized domain will be the original name with a possible suffix separated with an underscore (default `_ALLOUT`).
+The name of the determinized domain will be the original name with a possible suffix separated with an underscore (default `_NEW`). Use `--suffix-domain ""` to use no suffix (same name as original domain).
 
 The deterministic versions of a non-deterministic action are enumerated (starting from 1) with possible prefix and suffix on the number, each part separated with an underscore `_`. For example, the third deterministic action of operator `move` would be named `move_<PREFIX>_3_<SUFFIX>`; if no prefix or suffix is set, it would be just `move_3`.
 
 > [!TIP]
-> To change the default prefix `DETDUP` use the options `--prefix`, and to add a suffix after the number, use `--suffix`. To get the resulting PDDL printed on console use `--console`:
+> To change the default operator name prefix `DETDUP` use the options `--prefix`, and to add a suffix after the number, use `--suffix`. To set the suffix for the domain name use `--suffix-domain`. To get the resulting PDDL printed on console use `--console`:
 
 ```lisp
 $ fond-utils  determinize --input tests/domain_03.pddl --prefix "PRE" --suffix "SUF"  --prefix-domain "NEW" --console
@@ -141,6 +141,9 @@ $ fond-utils  determinize --input tests/domain_03.pddl --prefix "PRE" --suffix "
 
 This resulting PDDL domain is now deterministic and can then be used as input to the original [Fast-Downward](https://github.com/aibasel/downward) SAS translator.
 
+> [!WARNING]
+> If the new domain is named with a suffix (as in the default case), existing problem instances may not be compatible with the new domain, as they will still refer to the original domain in the `:domain` section. If these problem instances will be used with the new PDDL encoding, either use no suffix for the domain name (so it will keep the same name as the original) or change the `:domain` section in the problem instances to match the new name that includes the suffix.
+
 ### As a library
 
 This is an example of how we can normalize and determinize a PDDL non-deterministic domain programmatically:
@@ -172,7 +175,7 @@ domain_det = determinize(domain)
 print(domain_to_string(domain_det))
 ```
 
-We can also parse files that contain both domain and problem using function `parse_domain_problem` in `fondutils.pddl`. 
+To parse parse files that contain _both_ domain and problem together, we can use function `parse_domain_problem` in `fondutils.pddl`:
 
 ```python
 import io
