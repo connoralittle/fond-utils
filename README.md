@@ -111,22 +111,22 @@ The deterministic versions of a non-deterministic action are enumerated (startin
 > To change the default prefix `DETDUP` use the options `--prefix`, and to add a suffix after the number, use `--suffix`. To get the resulting PDDL printed on console use `--console`:
 
 ```lisp
-$ python -m fondutils determinize --input tests/domain_03.pddl --prefix "PRE" --suffix "SUF" --console
-(define (domain blocks-domain_ALLOUT)
+$ fond-utils  determinize --input tests/domain_03.pddl --prefix "PRE" --suffix "SUF"  --prefix-domain "NEW" --console
+(define (domain blocks-domain_NEW)
     (:requirements :equality :typing)
     (:types block)
     (:predicates (clear ?b - block)  (emptyhand) (holding ?b - block)  (on ?b1 - block ?b2 - block)  (on-table ?b - block))
-    (:action pick-up_PRE_1_SUF_
+    (:action pick-up_PRE_1_SUF
         :parameters (?b1 - block ?b2 - block)
         :precondition (and (not (= ?b1 ?b2)) (emptyhand) (clear ?b1) (on ?b1 ?b2))
         :effect (and (holding ?b1) (clear ?b2) (not (emptyhand)) (not (clear ?b1)) (not (on ?b1 ?b2)))
     )
-     (:action pick-up_PRE_2_SUF_
+     (:action pick-up_PRE_2_SUF
         :parameters (?b1 - block ?b2 - block)
         :precondition (and (not (= ?b1 ?b2)) (emptyhand) (clear ?b1) (on ?b1 ?b2))
         :effect (and (clear ?b2) (on-table ?b1) (not (on ?b1 ?b2)))
     )
-     (:action pick-up_PRE_3_SUF_
+     (:action pick-up_PRE_3_SUF
         :parameters (?b1 - block ?b2 - block)
         :precondition (and (not (= ?b1 ?b2)) (emptyhand) (clear ?b1) (on ?b1 ?b2))
         :effect (and )
@@ -137,7 +137,6 @@ $ python -m fondutils determinize --input tests/domain_03.pddl --prefix "PRE" --
         :effect (and (on-table ?b) (emptyhand) (clear ?b) (not (holding ?b)))
     )
 )
-...
 ```
 
 This resulting PDDL domain is now deterministic and can then be used as input to the original [Fast-Downward](https://github.com/aibasel/downward) SAS translator.
@@ -152,6 +151,36 @@ import inspect
 from pathlib import Path
 import requests
 
+from pddl import parse_domain
+from pddl.formatter import domain_to_string
+from fondutils.determizer import determinize
+from fondutils.normalizer import normalize
+
+# get a domain from AI-Planning/fond-domains repo
+URL_DOMAIN = "https://raw.githubusercontent.com/AI-Planning/fond-domains/refs/heads/main/benchmarks/blocksworld-2/domain.pddl"
+r = requests.get(URL_DOMAIN)
+domain_file = io.StringIO(r.content.decode("utf-8"))
+
+domain = parse_domain(domain_file)
+
+# compute the normalization of the domain and print it on console
+domain_norm = normalize(domain)
+print(domain_to_string(domain_norm))
+
+# compute the determinization of the domain and print it on console
+domain_det = determinize(domain)
+print(domain_to_string(domain_det))
+```
+
+We can also parse files that contain both domain and problem using function `parse_domain_problem` in `fondutils.pddl`. 
+
+```python
+import io
+import inspect
+from pathlib import Path
+import requests
+
+from pddl import parse_domain
 from pddl.formatter import domain_to_string
 from fondutils.pddl import parse_domain_problem
 from fondutils.determizer import determinize
@@ -173,7 +202,6 @@ domain_det = determinize(domain)
 print(domain_to_string(domain_det))
 ```
 
-Note the above code uses `fondutils.pddl.parse_domain_problem` for parsing, which can handle files containing both the domain and problem (though in the above example we the file only contains a domain).
 
 ## Format allowed on effects
 
