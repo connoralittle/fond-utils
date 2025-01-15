@@ -183,7 +183,6 @@ import inspect
 from pathlib import Path
 import requests
 
-from pddl import parse_domain
 from pddl.formatter import domain_to_string, problem_to_string
 from fondutils.pddl import parse_domain_problem
 from fondutils.determizer import determinize
