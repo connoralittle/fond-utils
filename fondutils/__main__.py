@@ -20,12 +20,17 @@ def main():
     parser.add_argument("--output", help="Output domain file")
     parser.add_argument("--outproblem", help="Optional output problem file")
     parser.add_argument(
-        "--prefix",
-        default="_DETDUP_",
-        help="Prefix for determinized action outcome identifier (Default: %(default)s)",
+        "--prefix-domain",
+        default="ALLOUT",
+        help="Suffix for the resulting determinized domain (Default: %(default)s)",
     )
     parser.add_argument(
-        "--suffix", default="", help="Suffix for determinized action outcome identifier"
+        "--prefix",
+        default="DETDUP",
+        help="Prefix for determinized action outcome name (Default: %(default)s)",
+    )
+    parser.add_argument(
+        "--suffix", default="", help="Suffix for determinized action outcome name"
     )
 
     parser.add_argument(
@@ -74,7 +79,12 @@ def main():
         return
 
     elif args.command == "determinize":
-        new_domain = determinize(fond_domain, op_prefix=args.prefix, op_suffix=args.suffix)
+        new_domain = determinize(
+            fond_domain,
+            dom_suffix=args.prefix_domain,
+            op_prefix=args.prefix,
+            op_suffix=args.suffix,
+        )
 
     elif args.command == "normalize":
         new_domain = normalize(fond_domain)

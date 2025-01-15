@@ -12,7 +12,7 @@ DEBUG = False
 
 
 def determinize(domain: Domain, dom_suffix: str = "ALLOUT", op_prefix: str = "DETDUP", op_suffix: str = "") -> Domain:
-    """Compute the all-outcome deterministic version of a FOND domain.
+    """Computes the all-outcome deterministic version of a FOND domain.
 
     Each non-deterministic operator is replaced by a set of deterministic operators, one for each possible outcome.
 
@@ -22,12 +22,12 @@ def determinize(domain: Domain, dom_suffix: str = "ALLOUT", op_prefix: str = "DE
 
     Args:
         domain (Domain): the FOND domain to be determinized
-        dom_suffix (str, optional): the suffix on the resulting domain name. Defaults to "_ALLOUT".
-        op_prefix (str, optional): _description_. Defaults to "_DETDUP_".
-        op_suffix (str, optional): _description_. Defaults to "".
+        dom_suffix (str, optional): the suffix on the resulting domain name. Defaults to "ALLOUT".
+        op_prefix (str, optional): the prefix for action name before the number. Defaults to "DETDUP".
+        op_suffix (str, optional): the suffix for action name after the number. Defaults to no suffix.
 
     Returns:
-        Domain: _description_
+        Domain: the all outcome determinized domain
     """
     new_actions = []
 
@@ -44,8 +44,6 @@ def determinize(domain: Domain, dom_suffix: str = "ALLOUT", op_prefix: str = "DE
     # make sure the domain name is well-formed and suffix separated form original name
     if dom_suffix != "" and dom_suffix[0] != "_":
         dom_suffix = "_" + dom_suffix
-        
-    print(op_prefix, op_suffix, dom_suffix)
 
     for act in domain.actions:
         if DEBUG:
