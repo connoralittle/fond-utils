@@ -20,9 +20,9 @@ def main():
     parser.add_argument("--output", help="Output domain file")
     parser.add_argument("--outproblem", help="Optional output problem file")
     parser.add_argument(
-        "--prefix-domain",
-        default="ALLOUT",
-        help="Suffix for the resulting determinized domain (Default: %(default)s)",
+        "--suffix-domain",
+        default="NEW",
+        help="Suffix for the resulting domain (Default: %(default)s)",
     )
     parser.add_argument(
         "--prefix",
@@ -81,13 +81,13 @@ def main():
     elif args.command == "determinize":
         new_domain = determinize(
             fond_domain,
-            dom_suffix=args.prefix_domain,
+            dom_suffix=args.suffix_domain,
             op_prefix=args.prefix,
             op_suffix=args.suffix,
         )
 
     elif args.command == "normalize":
-        new_domain = normalize(fond_domain)
+        new_domain = normalize(fond_domain, dom_suffix=args.suffix_domain)
 
     if args.output:
         with open(args.output, "w") as f:

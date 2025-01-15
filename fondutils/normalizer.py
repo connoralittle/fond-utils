@@ -9,18 +9,21 @@ from itertools import product, chain
 
 DEBUG = False
 
-def normalize(domain: Domain) -> Domain:
+def normalize(domain: Domain, dom_suffix: str = "") -> Domain:
     new_actions = []
 
-    for act in domain.actions:
+    # make sure the domain name is well-formed and suffix separated form original name with an underscore
+    if dom_suffix != "" and dom_suffix[0] != "_":
+        dom_suffix = "_" + dom_suffix
 
+    for act in domain.actions:
         if DEBUG:
             print(f"\nNormalizing action: {act.name}")
 
         new_actions.append(normalize_operator(act))
 
     return Domain(
-        name=domain.name + "_NORM",
+        name=domain.name + dom_suffix,
         requirements=frozenset(
             [r for r in domain.requirements if r is not Requirements.NON_DETERMINISTIC]
         ),
