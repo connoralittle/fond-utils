@@ -85,7 +85,7 @@ $ cd fond-utils
 $ python -m fondutils check --input tests/domain_03.pddl
 ```
 
-### Normalize a domain
+#### Normalize a domain
 
 To simply perform normalization (i.e., have a single top-level `oneof` clause in the effect):
 
@@ -95,7 +95,7 @@ $ fond-utils normalize --input tests/domain_05.pddl --output normalized-domain.p
 
 Example `test/domain_05.pddl` includes some complex (nested) `oneof` effects. The name of the normalized domain will be the original name with suffix `_NORM`.
 
-### All-outcome determinization
+#### All-outcome determinization
 
 To perform the determinization, use the command `determinize`:
 
