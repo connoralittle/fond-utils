@@ -18,7 +18,7 @@
       (and (holding ?b1) (clear ?b2) (not (emptyhand)) (not (clear ?b1)) (not (on ?b1 ?b2)))
       (and (clear ?b2) (on-table ?b1) (not (on ?b1 ?b2)))
       (and)
-      )
+    )
   )
   (:action put-down
     :parameters (?b - block)
