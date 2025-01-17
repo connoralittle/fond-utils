@@ -4,10 +4,22 @@ from pddl.logic.base import OneOf, Not, And
 from pddl.logic.effects import When
 from pddl.logic.predicates import Predicate
 from pddl.requirements import Requirements
+from pddl.logic.functions import (
+    Increase,
+    Decrease,
+    Divide,
+    ScaleDown,
+    ScaleUp,
+    Plus,
+    Minus,
+    Times,
+    Assign,
+)
 
 from itertools import product, chain
 
 DEBUG = False
+
 
 def normalize(domain: Domain, dom_suffix: str = "") -> Domain:
     new_actions = []
@@ -65,13 +77,13 @@ def normalize_operator(op):
         eff = OneOf(*new_outcomes)
 
     return Action(
-        name=op.name,
-        parameters=op.parameters,
-        precondition=op.precondition,
-        effect=eff)
+        name=op.name, parameters=op.parameters, precondition=op.precondition, effect=eff
+    )
+
 
 def flatten(eff):
     return _flatten(eff)
+
 
 def combine(eff_lists):
     if DEBUG:
@@ -81,6 +93,7 @@ def combine(eff_lists):
     if DEBUG:
         print("Result: %s\n" % combined_oneofs)
     return combined_oneofs
+
 
 def _flatten(eff):
 
@@ -100,10 +113,12 @@ def _flatten(eff):
         return [When(eff.condition, res) for res in _flatten(eff.effect)]
 
     # Default cases
-    elif isinstance(eff, Not):
+    elif isinstance(eff, (Not, Predicate)):
         return [eff]
-
-    elif isinstance(eff, Predicate):
+    elif isinstance(
+        eff,
+        (Increase, Decrease, Divide, ScaleDown, ScaleUp, Plus, Minus, Times, Assign),
+    ):
         return [eff]
 
     else:
