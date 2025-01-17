@@ -2,7 +2,8 @@ import argparse
 
 from pddl.action import Action
 from pddl.core import Domain
-from pddl.logic.base import OneOf, And
+from pddl.logic.base import OneOf, And, Not
+from pddl.logic.predicates import Predicate
 from pddl.requirements import Requirements
 
 
@@ -54,7 +55,7 @@ def determinize(domain: Domain, dom_suffix: str = "ALLOUT", op_prefix: str = "DE
             counter = 1
             for eff in new_act.effect.operands:
                 assert isinstance(
-                    eff, And
+                    eff, (And, Predicate, Not)
                 ), f"Effect in OneOf is not an And effect: {eff}"
                 new_actions.append(
                     Action(
