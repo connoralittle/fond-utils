@@ -113,9 +113,10 @@ def _flatten(eff):
         return [When(eff.condition, res) for res in _flatten(eff.effect)]
 
     # Default cases
-    elif isinstance(eff, (Not, Predicate)):
+    # There's an assumption here that everything underneath doesn't need flattening; hence no recursive call.
+    elif isinstance(eff, (Not, Predicate)):  # classical logical
         return [eff]
-    elif isinstance(
+    elif isinstance(    # metric effects
         eff,
         (Increase, Decrease, Divide, ScaleDown, ScaleUp, Plus, Minus, Times, Assign),
     ):
