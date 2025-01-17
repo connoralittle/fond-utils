@@ -32,7 +32,7 @@ def determinize(domain: Domain, dom_suffix: str = "ALLOUT", op_prefix: str = "_D
     """
     new_actions = []
 
-    # make sure original names of actions and domain name are separeted with an underscore _
+    # make sure original names of actions and domain name are separated with an underscore _
     if op_prefix == "":
         op_prefix = "_"
     if dom_suffix != "" and dom_suffix[0] != "_":
