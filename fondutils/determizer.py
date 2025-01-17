@@ -12,7 +12,7 @@ from .normalizer import normalize_operator
 DEBUG = False
 
 
-def determinize(domain: Domain, dom_suffix: str = "ALLOUT", op_prefix: str = "DETDUP", op_suffix: str = "") -> Domain:
+def determinize(domain: Domain, dom_suffix: str = "ALLOUT", op_prefix: str = "_DETDUP_", op_suffix: str = "") -> Domain:
     """Computes the all-outcome deterministic version of a FOND domain.
 
     Each non-deterministic operator is replaced by a set of deterministic operators, one for each possible outcome.
@@ -32,17 +32,9 @@ def determinize(domain: Domain, dom_suffix: str = "ALLOUT", op_prefix: str = "DE
     """
     new_actions = []
 
-    # make sure prefixes and suffixes are well formed and are able to separate the original operator name from the counter
+    # make sure original names of actions and domain name are separeted with an underscore _
     if op_prefix == "":
         op_prefix = "_"
-    if op_prefix[-1] != "_":
-        op_prefix += "_"
-    if op_prefix[0] != "_":
-        op_prefix = "_" + op_prefix
-    if op_suffix != "" and op_suffix[0] != "_":
-        op_suffix = "_" + op_suffix
-
-    # make sure the domain name is well-formed and suffix separated form original name
     if dom_suffix != "" and dom_suffix[0] != "_":
         dom_suffix = "_" + dom_suffix
 
