@@ -4,23 +4,38 @@ from pddl.logic.base import OneOf, Not, And
 from pddl.logic.effects import When
 from pddl.logic.predicates import Predicate
 from pddl.requirements import Requirements
+from pddl.logic.functions import (
+    Increase,
+    Decrease,
+    Divide,
+    ScaleDown,
+    ScaleUp,
+    Plus,
+    Minus,
+    Times,
+    Assign,
+)
 
 from itertools import product, chain
 
 DEBUG = False
 
-def normalize(domain: Domain) -> Domain:
+
+def normalize(domain: Domain, dom_suffix: str = "") -> Domain:
     new_actions = []
 
-    for act in domain.actions:
+    # make sure the domain name is well-formed and suffix separated form original name with an underscore
+    if dom_suffix != "" and dom_suffix[0] != "_":
+        dom_suffix = "_" + dom_suffix
 
+    for act in domain.actions:
         if DEBUG:
             print(f"\nNormalizing action: {act.name}")
 
         new_actions.append(normalize_operator(act))
 
     return Domain(
-        name=domain.name + "_NORM",
+        name=domain.name + dom_suffix,
         requirements=frozenset(
             [r for r in domain.requirements if r is not Requirements.NON_DETERMINISTIC]
         ),
@@ -62,13 +77,13 @@ def normalize_operator(op):
         eff = OneOf(*new_outcomes)
 
     return Action(
-        name=op.name,
-        parameters=op.parameters,
-        precondition=op.precondition,
-        effect=eff)
+        name=op.name, parameters=op.parameters, precondition=op.precondition, effect=eff
+    )
+
 
 def flatten(eff):
     return _flatten(eff)
+
 
 def combine(eff_lists):
     if DEBUG:
@@ -78,6 +93,7 @@ def combine(eff_lists):
     if DEBUG:
         print("Result: %s\n" % combined_oneofs)
     return combined_oneofs
+
 
 def _flatten(eff):
 
@@ -97,10 +113,13 @@ def _flatten(eff):
         return [When(eff.condition, res) for res in _flatten(eff.effect)]
 
     # Default cases
-    elif isinstance(eff, Not):
+    # There's an assumption here that everything underneath doesn't need flattening; hence no recursive call.
+    elif isinstance(eff, (Not, Predicate)):  # classical logical
         return [eff]
-
-    elif isinstance(eff, Predicate):
+    elif isinstance(    # metric effects
+        eff,
+        (Increase, Decrease, Divide, ScaleDown, ScaleUp, Plus, Minus, Times, Assign),
+    ):
         return [eff]
 
     else:

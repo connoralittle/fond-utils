@@ -4,3 +4,4 @@ venv/
 normalized-domain.pddl
 fond_utils.egg-info/
 build/
+test.py

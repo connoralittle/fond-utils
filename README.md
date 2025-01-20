@@ -59,52 +59,74 @@ options:
 > [!NOTE]
 > The scripts on this system relies on the [pddl](https://github.com/AI-Planning/pddl) parser, which can be easily installed via [PyPi](https://pypi.org/project/pddl/) repository (`pip install pddl`). The pddl system relies itself on the [lark](https://lark-parser.readthedocs.io/en/stable/) parsing library. The fond-utils system, however, extends `pddl` to accept single files containing _both_ the domain and the problem instance, and will be extended further to accept labelled outcomes in the effects.
 
-## Example runs
+## Quickstart
 
-The system is provided as a module `fondutils`. To just check that the PDDL input file is parsed well, use the command `check` and report to console:
+You can use the fond-utils package in two ways: as a library, and as a CLI tool.
+
+### As a CLI application tool
+
+To just check that the PDDL input file is parsed well, use the command `check` and report to console:
 
 ```shell
+$ fond-utils check --input https://raw.githubusercontent.com/AI-Planning/fond-utils/refs/heads/main/tests/domain_03.pddl
+```
+
+Since the system is provided as a module `fondutils`, this would be equivalent to:
+
+```shell
+$ python -m fondutils check --input https://raw.githubusercontent.com/AI-Planning/fond-utils/refs/heads/main/tests/domain_03.pddl
+```
+
+Note this would work if you have cloned the repo rather than installed the actual package; for example:
+
+```shell
+$ git clone https://github.com/AI-Planning/fond-utils
+$ cd fond-utils
 $ python -m fondutils check --input tests/domain_03.pddl
 ```
+
+#### Normalize a domain
 
 To simply perform normalization (i.e., have a single top-level `oneof` clause in the effect):
 
 ```shell
-$ python -m fondutils normalize --input tests/domain_05.pddl --output normalized-domain.pddl
+$ fond-utils normalize --input tests/domain_05.pddl --output normalized-domain.pddl
 ```
 
 Example `test/domain_05.pddl` includes some complex (nested) `oneof` effects. The name of the normalized domain will be the original name with suffix `_NORM`.
 
+#### All-outcome determinization
+
 To perform the determinization, use the command `determinize`:
 
 ```shell
-$ python -m fondutils determinize --input tests/domain_03.pddl --output determinized-domain.pddl
+$ fond-utils determinize --input tests/domain_03.pddl --output determinized-domain.pddl
 ```
 
-The name of the determinized domain will be the original name with suffix `_ALLOUT`.
+The name of the determinized domain will be the original name with a possible suffix separated with an underscore (default `_NEW`). Use `--suffix-domain ""` to use no suffix (same name as original domain).
 
-By default, deterministic versions of non-deterministic actions will be indexed with term `__DETDUP_<n>` (as done by [PRP](https://github.com/QuMuLab/planner-for-relevant-policies)'s original determinizer).
+The deterministic versions of a non-deterministic action are enumerated (starting from 1) with possible prefix and suffix on the number, each part separated with an underscore `_`. For example, the third deterministic action of operator `move` would be named `move_<PREFIX>_3_<SUFFIX>`; if no prefix or suffix is set, it would be just `move_3`.
 
 > [!TIP]
-> To change the default prefix `_DETDUP_` use the options `--prefix`, and to add a suffix after the number, use `--suffix`. To get the resulting PDDL printed on console use `--console`:
+> To change the default operator name prefix `DETDUP` use the options `--prefix`, and to add a suffix after the number, use `--suffix`. To set the suffix for the domain name use `--suffix-domain`. To get the resulting PDDL printed on console use `--console`:
 
 ```lisp
-$ python -m fondutils determinize --input tests/domain_03.pddl --suffix "_SUF_" --prefix "_PRE_" --console
-(define (domain blocks-domain_ALLOUT)
+$ fond-utils  determinize --input tests/domain_03.pddl --prefix "PRE" --suffix "SUF"  --suffix-domain "NEW" --console
+(define (domain blocks-domain_NEW)
     (:requirements :equality :typing)
     (:types block)
     (:predicates (clear ?b - block)  (emptyhand) (holding ?b - block)  (on ?b1 - block ?b2 - block)  (on-table ?b - block))
-    (:action pick-up_PRE_1_SUF_
+    (:action pick-up_PRE_1_SUF
         :parameters (?b1 - block ?b2 - block)
         :precondition (and (not (= ?b1 ?b2)) (emptyhand) (clear ?b1) (on ?b1 ?b2))
         :effect (and (holding ?b1) (clear ?b2) (not (emptyhand)) (not (clear ?b1)) (not (on ?b1 ?b2)))
     )
-     (:action pick-up_PRE_2_SUF_
+     (:action pick-up_PRE_2_SUF
         :parameters (?b1 - block ?b2 - block)
         :precondition (and (not (= ?b1 ?b2)) (emptyhand) (clear ?b1) (on ?b1 ?b2))
         :effect (and (clear ?b2) (on-table ?b1) (not (on ?b1 ?b2)))
     )
-     (:action pick-up_PRE_3_SUF_
+     (:action pick-up_PRE_3_SUF
         :parameters (?b1 - block ?b2 - block)
         :precondition (and (not (= ?b1 ?b2)) (emptyhand) (clear ?b1) (on ?b1 ?b2))
         :effect (and )
@@ -115,14 +137,72 @@ $ python -m fondutils determinize --input tests/domain_03.pddl --suffix "_SUF_" 
         :effect (and (on-table ?b) (emptyhand) (clear ?b) (not (holding ?b)))
     )
 )
-...
 ```
 
-This resulting PDDL domain is now deterministic and can then be used as input to the original [Fast-Downard](https://github.com/aibasel/downward) SAS translator.
+This resulting PDDL domain is now deterministic and can then be used as input to the original [Fast-Downward](https://github.com/aibasel/downward) SAS translator.
 
->[!NOTE]
-> The tool
- python -m fondutils normalize --input tests/domprob_05.pddl --output tea.pddl --outproblem tea2.pddl
+> [!WARNING]
+> If the new domain is named with a suffix (as in the default case), existing problem instances may not be compatible with the new domain, as they will still refer to the original domain in the `:domain` section. If these problem instances will be used with the new PDDL encoding, either use no suffix for the domain name (so it will keep the same name as the original) or change the `:domain` section in the problem instances to match the new name that includes the suffix (by setting private property `_domain_name`). Note that if the file parsed included the problem as well, the CLI tool will do such update so that the resulting problem will have its domain name matching the new domain.
+
+### As a library
+
+This is an example of how we can normalize and determinize a PDDL non-deterministic domain programmatically:
+
+```python
+import io
+import inspect
+from pathlib import Path
+import requests
+
+from pddl import parse_domain
+from pddl.formatter import domain_to_string
+from fondutils.determizer import determinize
+from fondutils.normalizer import normalize
+
+# get a domain from AI-Planning/fond-domains repo
+URL_DOMAIN = "https://raw.githubusercontent.com/AI-Planning/fond-domains/refs/heads/main/benchmarks/blocksworld-2/domain.pddl"
+r = requests.get(URL_DOMAIN)
+domain_file = io.StringIO(r.content.decode("utf-8"))
+
+domain = parse_domain(domain_file)
+
+# compute the normalization of the domain and print it on console
+domain_norm = normalize(domain)
+print(domain_to_string(domain_norm))
+
+# compute the determinization of the domain and print it on console
+domain_det = determinize(domain)
+print(domain_to_string(domain_det))
+```
+
+To parse parse files that contain _both_ domain and problem together, we can use function `parse_domain_problem` in `fondutils.pddl`. Note how the following code also sets explicit domain suffix and operators prefixes and suffixes, and how we update the domain name in the problem to match the new one:
+
+```python
+import io
+import inspect
+from pathlib import Path
+import requests
+
+from pddl.formatter import domain_to_string, problem_to_string
+from fondutils.pddl import parse_domain_problem
+from fondutils.determizer import determinize
+from fondutils.normalizer import normalize
+
+# get a domain from AI-Planning/fond-domains repo
+URL_DOMAIN = "https://raw.githubusercontent.com/AI-Planning/fond-utils/refs/heads/main/tests/domprob_03.pddl"
+r = requests.get(URL_DOMAIN)
+domain_file = io.StringIO(r.content.decode("utf-8"))
+
+domain, problem = parse_domain_problem(domain_file)
+
+# compute the determinization of the domain and print it on console
+domain_det = determinize(domain, dom_suffix="XYZ", op_prefix="PRE", op_suffix="SUF")
+print(domain_to_string(domain_det))
+
+# update domain name in problem to match new domain name and print updated problem
+problem._domain_name = domain_det.name
+print(problem_to_string(problem))
+```
 
 ## Format allowed on effects
 
