@@ -1,0 +1,32 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fondutils"
+description = "FOND Utilities and Helpers"  # <-- description from __description__.py
+version = "0.1.3"  # <-- this will need to be updated dynamically (https://github.com/pypa/setuptools-scm
+authors = [
+    { name="Christian Muise", email="christian.muise@queensu.ca" },
+    { name="Sebastian Sardina", email="ssardina@gmail.com" }
+]
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.8"
+dependencies = [
+  "pddl"
+]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: MIT License",
+  "Operating System :: POSIX :: Linux"
+]
+
+[project.urls]
+Homepage = "https://github.com/AI-Planning/fond-utils/"  # or your about["__url__"]
+
+[tool.setuptools.packages.find]
+include = ["fondutils", "fondutils.pddl", "fondutils.helpers"]
+
+[project.scripts]
+fond-utils = "fondutils.__main__:main"
