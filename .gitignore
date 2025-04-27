@@ -5,3 +5,9 @@ normalized-domain.pddl
 fond_utils.egg-info/
 build/
 test.py
+fondutils.egg-info/dependency_links.txt
+fondutils.egg-info/entry_points.txt
+fondutils.egg-info/PKG-INFO
+fondutils.egg-info/requires.txt
+fondutils.egg-info/SOURCES.txt
+fondutils.egg-info/top_level.txt
