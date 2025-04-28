@@ -24,8 +24,13 @@ classifiers = [
 # version = "0.1.2"  # <-- old static version
 dynamic = ["version"]
 
+# enable this if you want to generate the version from a file
+# [tool.setuptools_scm]
+# version_file = "fondutils/__version__.py"
+
+
 [tool.setuptools_scm]
-version_file = "fondutils/__version__.py"
+tag_regex = "^v(?P<version>.*)$"  # version tag regex v1.0.0 (with a v in front
 
 [project.urls]
 Homepage = "https://github.com/AI-Planning/fond-utils/"  # or your about["__url__"]

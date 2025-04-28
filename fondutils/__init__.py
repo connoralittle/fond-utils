@@ -8,10 +8,12 @@
 
 """Top-level package for fond-utils."""
 
-from .__version__ import (
-    version,
-)
+# no need anymore, all automatic via setuptools-scm
+# from .__version__ import (
+#     version,
+# )
+from importlib.metadata import version
 from .helpers.base import _get_current_path
 
 _ROOT_PATH = _get_current_path()
-VERSION = version
+VERSION = version("fondutils")
