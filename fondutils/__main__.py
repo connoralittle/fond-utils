@@ -15,7 +15,7 @@ import requests
 def main():
     parser = argparse.ArgumentParser(description="Utilities to process FOND PDDL")
 
-    parser.add_argument("command", choices=["check", "determinize", "normalize"])
+    parser.add_argument("command", choices=["check", "determinize", "normalize", "validate-sas"])
     parser.add_argument("--input", required=True, help="Input domain file/url")
     parser.add_argument("--output", help="Output domain file")
     parser.add_argument("--outproblem", help="Optional output problem file")
@@ -35,6 +35,10 @@ def main():
 
     parser.add_argument(
         "--console", action="store_true", help="Print the domain after processing"
+    )
+    parser.add_argument(
+        "--sasfile",
+        help="SAS file to validate (only for validate-sas command)"
     )
     args = parser.parse_args()
 
@@ -88,6 +92,12 @@ def main():
 
     elif args.command == "normalize":
         new_domain = normalize(fond_domain, dom_suffix=args.suffix_domain)
+
+    elif args.command == "validate-sas":
+        if not args.sasfile:
+            parser.error("sasfile is required for validate-sas command")
+        from .sas import confirm_all_outcomes
+        confirm_all_outcomes(fond_domain, args.sasfile)
 
     if args.output:
         with open(args.output, "w") as f:
