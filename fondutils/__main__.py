@@ -3,6 +3,8 @@ import os
 
 from pddl.formatter import domain_to_string, problem_to_string
 
+from . import VERSION
+
 from .normalizer import normalize
 from .determizer import determinize
 from .pddl import parse_domain_problem
@@ -13,7 +15,7 @@ import io
 import requests
 
 def main():
-    parser = argparse.ArgumentParser(description="Utilities to process FOND PDDL")
+    parser = argparse.ArgumentParser(description=f"Utilities to process FOND PDDL - Version: {VERSION}")
 
     parser.add_argument("command", choices=["check", "determinize", "normalize"])
     parser.add_argument("--input", required=True, help="Input domain file/url")
