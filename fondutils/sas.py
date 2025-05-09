@@ -7,6 +7,8 @@ def confirm_all_outcomes(domain, sfile, detdup="_DETDUP"):
 
     print("\n  Confirming outcomes in sas file...\n")
 
+    assert "(oneof" not in str(domain), "Domain should be deterministic"
+
     action_to_outcome_count = {}
     for action in domain.actions:
         nondet_action = action.name.split(detdup)[0]
