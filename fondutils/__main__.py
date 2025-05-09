@@ -97,7 +97,7 @@ def main():
         if not args.sasfile:
             parser.error("sasfile is required for validate-sas command")
         from .sas import confirm_all_outcomes
-        confirm_all_outcomes(fond_domain, args.sasfile)
+        confirm_all_outcomes(fond_domain, args.sasfile, args.prefix)
 
     if args.output:
         with open(args.output, "w") as f:

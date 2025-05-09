@@ -1,6 +1,6 @@
 
 
-def confirm_all_outcomes(domain, sfile, suffix="_DETDUP"):
+def confirm_all_outcomes(domain, sfile, detdup="_DETDUP"):
     """
     Confirm that every outcome in the domain file is also in the sas file for every ground action.
     """
@@ -9,7 +9,7 @@ def confirm_all_outcomes(domain, sfile, suffix="_DETDUP"):
 
     action_to_outcome_count = {}
     for action in domain.actions:
-        nondet_action = action.name.split(suffix)[0]
+        nondet_action = action.name.split(detdup)[0]
         if nondet_action not in action_to_outcome_count:
             action_to_outcome_count[nondet_action] = 0
         action_to_outcome_count[nondet_action] += 1
@@ -22,7 +22,7 @@ def confirm_all_outcomes(domain, sfile, suffix="_DETDUP"):
         if line.startswith("begin_operator"):
             action = lines[i + 1].strip()
             args = " ".join(action.split(" ")[1:])
-            action_name = action.split(' ')[0].split(suffix.lower())[0]
+            action_name = action.split(' ')[0].split(detdup.lower())[0]
 
             if action_name not in ground_action_details:
                 ground_action_details[action_name] = {}
